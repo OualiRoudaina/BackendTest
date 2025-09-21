@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------- SALES ---------------------------
+model Sales {
+  id                        String   @id
+  afClickId                 String?
+  influencerId              String?  // juste un champ, pas de relation
+  referralInfluencerId      String?  // juste un champ, pas de relation
+  offerId                   String?
+  clickId                   String?
+  affiliateId               String?
+  amount                    Float?
+  commission                Float?
+  commissionAffiliate       Float?
+  commissionAgent           Float?
+  articleId                 String?
+  articleImgUrl             String?
+  articlePathUrl            String?
+  brandName                 String?
+  brandKey                  String?
+  categoryId                String?
+  subcategoryId             String?
+  colorId                   String?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @default(now())
+  countryCode               String?
+  currency                  String?
+  deviseType                String?
+  os                        String?
+  goal                      String?
+  isPrivate                 Boolean? @default(false)
+  status                    String?
+  advertiser                String?
+  commissionReferredInfluencer Float?
+  customField2              String?
+  customField3              String?
+  customField4              String?
+  customField5              String?
+  customField6              String?
+  paymentStatus             String?
+  salesBillId               String?
+  referralBillId            String?
+  localAmount               Float?
+  localCommission           Float?
+  currencyExchange           Float?
+  smiSalesPaymentStatus     String?
+  smiReferralPaymentStatus  String?
+  customField7              String?
+  voucher                   String?
+
+  
+  @@map("sales")
+}
+
+
+
+// --------------------------- ARTICLES ---------------------------
+model Articles {
+  id           String   @id
+  image        String?
+  likesNbr     Int?
+  offerId      String?
+  orderNbr     Int?
+  site         String?
+  trackingLink String?
+  uid          String?
+  url          String?
+  wishlistId   String?
+  hasWishlist  Boolean? @default(false)
+  createdAt    DateTime @default(now())
+  plugin       String?
+  test         Boolean? @default(false)
+  colorId      String?
+  
+  // Relations
+  color Colors? @relation(fields: [colorId], references: [id])
+
+  @@map("articles")
+}
+
+// --------------------------- BRANDS ---------------------------
+model Brands {
+  id           String   @id
+  name         String?
+  displayName  String?
+  description  String?
+  premium      Boolean? @default(false)
+  href         String?
+  offerId      String?
+  currency     String?
+  createdAt    DateTime @default(now())
+  brandKey     String? @unique
+  localisation String?
+  isPrivate    Boolean? @default(false)
+
+  // Champ pour stocker plusieurs catégories, mais pas de relation
+  categ        String?  // tu peux mettre les IDs séparés par une virgule ou JSON string
+
+  @@map("brands")
+}
+
+
+// --------------------------- COLORS ---------------------------
+model Colors {
+  id      String   @id
+  code    String?
+  nameEn  String?
+  nameFr  String?
+
+  // Relations
+  articles Articles[]
+
+  @@map("colors")
+}
+
+// --------------------------- CATEGORIES ---------------------------
+model Categories {
+  id            String   @id
+  nameEn        String?
+  nameFr        String?
+  nameEs        String?
+  namePl        String?
+  img           String?
+
+  // Relations
+  subcategories Subcategories[]
+
+  @@map("categories")
+}
+
+// --------------------------- SUBCATEGORIES ---------------------------
+model Subcategories {
+  id          String   @id
+  categoryId  String?
+  nameEn      String?
+  nameFr      String?
+
+  // Relations
+  category Categories? @relation(fields: [categoryId], references: [id])
+
+  @@map("subcategories")
+}
+
+// --------------------------- INFLUENCERS ---------------------------
+model Influencers {
+  id                       String   @id
+  affiliateId              String?
+  uid                      String?
+  kolId                    String?
+  firstName                String?
+  lastName                 String?
+  name                     String?
+  civility                 String?
+  email                    String?
+  phoneNumber              String?
+  phoneCode                String?
+  phoneCountryCode         String?
+  dateOfBirth              DateTime?
+  country                  String?
+  language                 String?
+  isOnline                 Boolean? @default(false)
+  communitySize            Int?
+  score                    Float?
+  verified                 Boolean? @default(false)
+  newsletter               Boolean? @default(false)
+  referredBy               String?
+  agentId                  String?
+  favouriteBrands          String[]
+  favouriteBrandsIds       String[]
+  createdAt                DateTime @default(now())
+  lastConnexion            DateTime?
+  hubspotId                String?
+  stability                String?
+  android                  Boolean?
+  ios                      Boolean?
+  appVersion               String?
+  hasProducts              Boolean?
+  hasEmptyWishlists        Boolean?
+  amznId                   String?
+  activateDirectShortlinks Boolean?
+
+  @@map("influencers")
+}
+
