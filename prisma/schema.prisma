@@ -11,8 +11,8 @@ datasource db {
 model Sales {
   id                        String   @id
   afClickId                 String?
-  influencerId              String?  // juste un champ, pas de relation
-  referralInfluencerId      String?  // juste un champ, pas de relation
+  influencerId              String?  
+  referralInfluencerId      String?  
   offerId                   String?
   clickId                   String?
   affiliateId               String?
@@ -100,8 +100,7 @@ model Brands {
   localisation String?
   isPrivate    Boolean? @default(false)
 
-  // Champ pour stocker plusieurs catégories, mais pas de relation
-  categ        String?  // tu peux mettre les IDs séparés par une virgule ou JSON string
+  categ        String?  
 
   @@map("brands")
 }
@@ -114,7 +113,6 @@ model Colors {
   nameEn  String?
   nameFr  String?
 
-  // Relations
   articles Articles[]
 
   @@map("colors")
@@ -129,7 +127,6 @@ model Categories {
   namePl        String?
   img           String?
 
-  // Relations
   subcategories Subcategories[]
 
   @@map("categories")
