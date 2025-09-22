@@ -2,17 +2,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Fonction utilitaire pour construire les conditions de date
 const buildDateWhere = (startDate?: Date, endDate?: Date, year?: number) => {
   const where: any = {};
   
   if (year) {
-    // Si une année est spécifiée, filtrer par année entière
-    const yearStart = new Date(year, 0, 1); // 1er janvier de l'année
-    const yearEnd = new Date(year, 11, 31, 23, 59, 59, 999); // 31 décembre de l'année
+    const yearStart = new Date(year, 0, 1);
+    const yearEnd = new Date(year, 11, 31, 23, 59, 59, 999);
     where.createdAt = { gte: yearStart, lte: yearEnd };
   } else if (startDate && endDate) {
-    // Sinon, utiliser les dates de début et fin
     where.createdAt = { gte: startDate, lte: endDate };
   }
   
@@ -184,7 +181,6 @@ export const getTopInfluencer = async (startDate?: Date, endDate?: Date, brandId
   return result[0]?.influencerId || null;
 };
 
-// Nouvelles fonctions pour récupérer les noms
 export const getColorName = async (colorId: string | null) => {
   if (!colorId) return null;
   
@@ -196,7 +192,6 @@ export const getColorName = async (colorId: string | null) => {
   if (color?.nameFr) return color.nameFr;
   if (color?.nameEn) return color.nameEn;
   
-  // Si pas de couleur trouvée, retourner un nom générique basé sur l'ID
   return `Couleur ${colorId.slice(-4)}`;
 };
 
@@ -221,7 +216,6 @@ export const getProductName = async (productId: string | null) => {
   
   if (product?.uid) return product.uid;
   if (product?.url) {
-    // Extraire le nom du produit de l'URL
     const urlParts = product.url.split('/');
     const lastPart = urlParts[urlParts.length - 1];
     return lastPart.split('?')[0] || `Produit ${productId.slice(-4)}`;
@@ -247,15 +241,12 @@ export const getInfluencerName = async (influencerId: string | null) => {
   return `Influenceur ${influencerId.slice(-4)}`;
 };
 
-// Calculer le taux de vente par influenceur
 export const getSalesRateByInfluencer = async (startDate?: Date, endDate?: Date, brandId?: string | number, year?: number) => {
   const where: any = { ...buildDateWhere(startDate, endDate, year) };
   if (brandId) where.brandKey = brandId.toString();
   
-  // Compter le nombre total de ventes
   const totalSales = await prisma.sales.count({ where });
   
-  // Compter le nombre de ventes avec un influenceur (influencerId non null)
   const salesWithInfluencer = await prisma.sales.count({
     where: {
       ...where,
@@ -263,12 +254,11 @@ export const getSalesRateByInfluencer = async (startDate?: Date, endDate?: Date,
     }
   });
   
-  // Calculer le pourcentage
   const salesRate = totalSales > 0 ? (salesWithInfluencer / totalSales) * 100 : 0;
   
   return {
     totalSales,
     salesWithInfluencer,
-    salesRate: Math.round(salesRate * 100) / 100 // Arrondir à 2 décimales
+    salesRate: Math.round(salesRate * 100) / 100
   };
 };
